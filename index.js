@@ -2,11 +2,11 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
-const botCommands = require('./commands');
+/*const botCommands = require('./commands');
 
 Object.keys(botCommands).map(key => {
   bot.commands.set(botCommands[key].name, botCommands[key]);
-});
+});*/
 
 const TOKEN = process.env.TOKEN;
 
@@ -42,28 +42,46 @@ bot.on('message', msg => {
 	    } else {
 		    var msplit = msg.content.split(' ');
 		    if(msplit.length == 6){
+				async function memeasync(acronym) {
+					console.log('Fetching Messages');
+					const msgs = await msg.channel.fetchMessages();
+					console.log('Grabbing Code');
+					var lobby_code = Array.from(msgs.entries()).pop()[1];
+					console.log(`Code: ${lobby_code}`);
+					var i = 0;
+					var flag = true;
+					for(i=0;i<6;i++){
+						if(lobby_code.content[i] != acronym[i][0].toUpperCase()){
+							flag = false;
+						}
+					}
+					if(flag){
+						console.log(`VALID AMONGUS MEME: ${acronym.join(' ')}`);
+						msg.react('🤣');
+					} else {
+						console.log(`INVALID AMONGUS MEME: ${acronym.join(' ')}`);
+						msg.delete();
+					}
+				}	
 				function meme(acronym) {
-			    //async function meme(acronym) {
-				    /*const msgs = await msg.channel.fetchMessages();
-				    //var firstMsg = msgs.entries().next().value[1];
-				    var lobby_code = Array.from(msgs.entries()).pop()[1];*/
-				    var i = 0;
-				    var flag = true;
-				    for(i=0;i<6;i++){
-						//if(lobby_code.content[i] != acronym[i][0].toUpperCase()){
+					var i = 0;
+					var flag = true;
+					for(i=0;i<6;i++){
 						if(lobby_code[i] != acronym[i][0].toUpperCase()){
 							flag = false;
 						}
-				  	}
-				    if(flag){
+					}
+					if(flag){
 						console.log(`VALID AMONGUS MEME: ${acronym.join(' ')}`);
 						msg.react('🤣');
-				    } else {
+					} else {
 						console.log(`INVALID AMONGUS MEME: ${acronym.join(' ')}`);
 						msg.delete();
-				    }
-			    }
-			    meme(msplit);
+					}
+				}	
+				console.log('Validating Meme');
+				memeasync(msplit);
+				//meme(msplit);
 			} else { 
 				console.log(`INVALID AMONGUS CODE: ${msg.content}`);
 				msg.delete();
